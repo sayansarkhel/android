@@ -1,0 +1,131 @@
+syntax = "proto3";
+
+package model;
+
+option java_package = "org.oppia.android.app.model";
+option java_multiple_files = true;
+
+// Top level proto used to store last used id and all profiles.
+message ProfileDatabase {
+  // Represents the next unique ID for adding a profile.
+  int32 next_profile_id = 1;
+
+  // Determines whether profile was ever added or not.
+  bool was_profile_ever_added = 2;
+
+  // Represents device settings for the app.
+  DeviceSettings device_settings = 3;
+
+  // Mapping from unique ID to profile.
+  map<int32, Profile> profiles = 4;
+}
+
+// Structure for device settings.
+message DeviceSettings{
+  // Determines whether to download and update content only on wifi.
+  bool allow_download_and_update_only_on_wifi = 1;
+
+  // Determines whether app can automatically update topics.
+  bool automatically_update_topics = 2;
+}
+
+// Structure for a single profile.
+message Profile {
+  // Unique ID given to each profile.
+  ProfileId id = 1;
+
+  // Name of the user.
+  string name = 2;
+
+  // Determines whether profile is locked by a PIN.
+  bool has_pin = 3;
+
+  // PIN of the profile.
+  string pin = 4;
+
+  ProfileAvatar avatar = 5;
+
+  // Determines whether profile is admin.
+  bool is_admin = 6;
+
+  // Determines whether profile can download content.
+  bool allow_download_access = 7;
+
+  // Represents the time the user was last logged in.
+  int64 last_logged_in_timestamp_ms = 8;
+
+  // Represents the time the user's profile was created.
+  int64 date_created_timestamp_ms = 9;
+
+  // Represents user selected reading-text-size.
+  ReadingTextSize reading_text_size = 10;
+
+  // Represents user selected audio-language.
+  AudioLanguage audio_language = 11;
+
+  // Represents user selected app-language.
+  AppLanguage app_language = 12;
+
+  // Represents a generally study-unique ID that helps identify this profile for analytics logs that
+  // are enabled as part of a user study. In non-user study cases this is expected to either be
+  // empty or a meaningless value.
+  string learner_id = 13;
+}
+
+// Represents a profile avatar image.
+message ProfileAvatar {
+  oneof avatar_type {
+    // User selected image or gravatar.
+    string avatar_image_uri = 1;
+
+    // Tint color to be used with a generic profile image.
+    int32 avatar_color_rgb = 2;
+  }
+}
+
+// Opaque data structure to pass ID.
+message ProfileId {
+  /**
+   * Unique ID used to identify a single profile.
+   * Should not be used directory outside of the profile system.
+   */
+  int32 internal_id = 1;
+}
+
+// Used in BindableAdapter for ProfileChooserFragment.
+message ProfileChooserUiModel {
+  oneof model_type {
+    // Indicates an individual Profile.
+    Profile profile = 1;
+    //Indicates the add profile button.
+    bool add_profile = 2;
+  }
+}
+
+// Supported reading text sizes for user preference.
+enum ReadingTextSize {
+  TEXT_SIZE_UNSPECIFIED = 0;
+  SMALL_TEXT_SIZE = 1;
+  MEDIUM_TEXT_SIZE = 2;
+  LARGE_TEXT_SIZE = 3;
+  EXTRA_LARGE_TEXT_SIZE =  4;
+}
+
+// TODO(#3793): Replace this with OppiaLanguage.
+enum AppLanguage {
+  APP_LANGUAGE_UNSPECIFIED = 0;
+  ENGLISH_APP_LANGUAGE = 1;
+  HINDI_APP_LANGUAGE = 2;
+  FRENCH_APP_LANGUAGE = 3;
+  CHINESE_APP_LANGUAGE =  4;
+}
+
+// TODO(#3793): Replace this with OppiaLanguage.
+enum AudioLanguage {
+  AUDIO_LANGUAGE_UNSPECIFIED = 0;
+  NO_AUDIO = 1;
+  ENGLISH_AUDIO_LANGUAGE = 2;
+  HINDI_AUDIO_LANGUAGE = 3;
+  FRENCH_AUDIO_LANGUAGE = 4;
+  CHINESE_AUDIO_LANGUAGE =  5;
+}
